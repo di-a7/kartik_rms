@@ -1,0 +1,33 @@
+# Restaurant management system:
+
+# User
+   - name      CharField
+   - phone     CharField
+
+# Category
+   - name      CharField
+
+# Food
+   - id           int
+   - name         CharField
+   - description  TextField
+   - price        float/int
+   - category     FK(Category)(o-to-m)
+
+# Table
+   - table_number    char/int
+   - capacity        int
+   - available       bool
+   - status          enum(Empty, Pending, Completed)
+
+# Order
+   - Food            m-to-m
+   - User            FK(User)(o-to-m)
+   - Table           FK(Table)(o-to-m)
+   - total_price     float/int
+   - status          enum(Pending, Completed, Delivered)
+   - payment_status  bool
+
+# OrderItems
+   - order_id        FK(Order)
+   - food_id         FK(Food)
