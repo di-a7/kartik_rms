@@ -17,8 +17,8 @@ class CategoryDetailAPIView(RetrieveUpdateDestroyAPIView):
    queryset = Category.objects.all()
    serializer_class = CategorySerializer
    
-   def delete(self, request, *args, **kwargs):
-      category = Category.objects.get(id = id)
+   def destroy(self, request, *args, **kwargs):
+      category = self.get_object()
       items = OrderItem.objects.filter(food__category = category).count()
       if items > 0:
          return Response({"detail":"Protected: Category can't be deleted. Related to OrderItem"})
