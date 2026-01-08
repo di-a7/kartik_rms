@@ -6,24 +6,63 @@ from .serializers import CategorySerializer
 from rest_framework import status
 # Create your views here.
 # Class Based
+# ModelViewset
+from rest_framework import viewsets
 
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-
-class CategoryAPIView(ListCreateAPIView):
-   queryset = Category.objects.all()
-   serializer_class = CategorySerializer
-
-class CategoryDetailAPIView(RetrieveUpdateDestroyAPIView):
+class CategoryViewset(viewsets.ModelViewSet):
    queryset = Category.objects.all()
    serializer_class = CategorySerializer
    
-   def destroy(self, request, *args, **kwargs):
+   def destroy(self, request, pk):
       category = self.get_object()
       items = OrderItem.objects.filter(food__category = category).count()
       if items > 0:
          return Response({"detail":"Protected: Category can't be deleted. Related to OrderItem"})
       category.delete()
       return Response({"detail":"Data has been deleted."}, status = status.HTTP_204_NO_CONTENT)
+
+
+
+
+# Viewset
+# class CategoryViewset(viewsets.ViewSet):
+#    def list(self, request):
+#       category = Category.objects.all()
+#       serializer = CategorySerializer(category, many=True)
+#       return Response(serializer.data)
+   
+#    def create(self, request):
+#       serializer = CategorySerializer(data = request.data)
+#       serializer.is_valid(raise_exception=True)
+#       serializer.save()
+#       return Response({"detail": "New data created", "data": serializer.data}, status = status.HTTP_201_CREATED)
+
+# class CategoryDetailViewset(viewsets.ViewSet):
+#    def retrieve(self, request, pk):
+#       category = Category.objects.get(pk = pk)
+#       serializer = CategorySerializer(category)
+#       return Response(serializer.data)
+
+
+
+# Generic with Mixins
+# from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+
+# class CategoryAPIView(ListCreateAPIView):
+#    queryset = Category.objects.all()
+#    serializer_class = CategorySerializer
+
+# class CategoryDetailAPIView(RetrieveUpdateDestroyAPIView):
+#    queryset = Category.objects.all()
+#    serializer_class = CategorySerializer
+   
+#    def destroy(self, request, *args, **kwargs):
+#       category = self.get_object()
+#       items = OrderItem.objects.filter(food__category = category).count()
+#       if items > 0:
+#          return Response({"detail":"Protected: Category can't be deleted. Related to OrderItem"})
+#       category.delete()
+#       return Response({"detail":"Data has been deleted."}, status = status.HTTP_204_NO_CONTENT)
 
 
 

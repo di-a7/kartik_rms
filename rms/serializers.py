@@ -7,6 +7,26 @@ class CategorySerializer(serializers.ModelSerializer):
       fields = '__all__'
       # fields = ['id','name']
       # exclude = ['name']
+   
+   def save(self, **kwargs):
+      validated_data = self.validated_data
+      category = Category.objects.filter(name = validated_data.get('name')).count()
+      if category > 0:
+         raise serializers.ValidationError({"details":"This category already exists."})
+      return super().save(**kwargs)
+   
+   
+   # def create(self, validated_data):
+   #    category = Category.objects.filter(name = validated_data.get('name')).count()
+   #    if category > 0:
+   #       raise serializers.ValidationError({"details":"This category already exists."})
+   #    return super().create(validated_data)
+
+   # def update(self, instance, validated_data):
+   #    category = Category.objects.filter(name = validated_data.get('name')).count()
+   #    if category > 0:
+   #       raise serializers.ValidationError({"details":"This category already exists."})
+   #    return super().update(instance, validated_data)
 
 
 # class CategorySerializer(serializers.Serializer):
