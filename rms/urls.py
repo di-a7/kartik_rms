@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import CategoryViewset
+from .views import *
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('category',CategoryViewset)
+router.register('category',CategoryViewset, basename='category')
+router.register('foods', FoodViewset, basename='foods')
 
 urlpatterns = [
    # path('category/',CategoryViewset.as_view({'get':'list','post':'create'})),

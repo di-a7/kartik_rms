@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category
+from .models import *
 
 class CategorySerializer(serializers.ModelSerializer):
    class Meta:
@@ -14,38 +14,24 @@ class CategorySerializer(serializers.ModelSerializer):
       if category > 0:
          raise serializers.ValidationError({"details":"This category already exists."})
       return super().save(**kwargs)
-   
-   
-   # def create(self, validated_data):
-   #    category = Category.objects.filter(name = validated_data.get('name')).count()
-   #    if category > 0:
-   #       raise serializers.ValidationError({"details":"This category already exists."})
-   #    return super().create(validated_data)
-
-   # def update(self, instance, validated_data):
-   #    category = Category.objects.filter(name = validated_data.get('name')).count()
-   #    if category > 0:
-   #       raise serializers.ValidationError({"details":"This category already exists."})
-   #    return super().update(instance, validated_data)
 
 
-# class CategorySerializer(serializers.Serializer):
-#    id = serializers.IntegerField(read_only=True)
-#    name = serializers.CharField()
+
+class FoodSerializer(serializers.ModelSerializer):
+   price_with_tax = serializers.SerializerMethodField()
+   category = serializers.StringRelatedField()
+   category_id = serializers.PrimaryKeyRelatedField(queryset = Category.objects.all())
+   class Meta:
+      model = Food
+      fields = ['id','name','description','price','price_with_tax','category_id','category']
    
-#    def create(self, validated_data):
-#       category = Category.objects.create(name = validated_data.get('name'))
-#       # Category.objects.create(**validated_data)
-#       return category
-   
-#    def update(self, instance, validated_data):        # validated_data = {"name":"drinks"}
-#       instance.name = validated_data.get('name', instance.name)
-#       instance.save()
-#       return instance
-   
+   def get_price_with_tax(self, food:Food):
+      return food.price * 0.11 + food.price
 
 
-# instance = Todo.objects.get(id = 1)
-# instance.title # print the title of id 1
-# instance.title = "new title"
-# instance.save()
+# data optimization, filtering, pagination
+
+
+
+
+
