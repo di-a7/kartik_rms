@@ -5,6 +5,11 @@ from .models import *
 from .serializers import *
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.pagination import PageNumberPagination 
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from .filter import FoodFilter
+
 # Create your views here.
 # Class Based
 # ModelViewset
@@ -23,8 +28,13 @@ class CategoryViewset(viewsets.ModelViewSet):
 
 
 class FoodViewset(viewsets.ModelViewSet):
-   queryset = Food.objects.all()
+   queryset = Food.objects.select_related('category').all()
    serializer_class = FoodSerializer
+   pagination_class = PageNumberPagination
+   filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+   search_fields = ['name']
+   filterset_fields  = ['category']
+   filterset_class = FoodFilter
 
 
 
