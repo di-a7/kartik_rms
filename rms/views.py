@@ -10,6 +10,7 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .filter import FoodFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 # Create your views here.
 # Class Based
 # ModelViewset
@@ -18,6 +19,16 @@ class CategoryViewset(viewsets.ModelViewSet):
    queryset = Category.objects.all()
    serializer_class = CategorySerializer
    permission_classes = [IsAuthenticatedOrReadOnly]
+   
+   @extend_schema(
+      parameters=[
+         OpenApiParameter(name='name', description='Name of the food', required=False, type=str),
+      ],
+      description='This is a GET food api',
+   )
+   def list(self, request):
+      # your non-standard behaviour
+      return super().list(request)
    
    def destroy(self, request, pk):
       category = self.get_object()
@@ -36,6 +47,17 @@ class FoodViewset(viewsets.ModelViewSet):
    search_fields = ['name']
    filterset_fields  = ['category']
    filterset_class = FoodFilter
+   permission_classes = [IsAuthenticatedOrReadOnly]
+   
+   @extend_schema(
+      parameters=[
+         OpenApiParameter(name='description', description='Name of the food', required=False, type=str),
+      ],
+      description='This is a GET food api',
+   )
+   def list(self, request):
+      # your non-standard behaviour
+      return super().list(request)
 
 
 
