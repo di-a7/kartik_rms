@@ -59,6 +59,11 @@ class FoodViewset(viewsets.ModelViewSet):
       # your non-standard behaviour
       return super().list(request)
 
+class OrderViewset(viewsets.ModelViewSet):
+   queryset = Order.objects.prefetch_related('items').all()
+   serializer_class = OrderSerializer
+   permission_classes = [IsAuthenticatedOrReadOnly]
+   pagination_class = PageNumberPagination
 
 
 

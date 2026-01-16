@@ -30,3 +30,8 @@
 # OrderItems
    - order_id        FK(Order)
    - food_id         FK(Food)
+
+
+py manage.py dumpdata < file_name.json (backup all the datas in the project)
+py manage.py dumpdata rms < file_name.json (backup the datas of rms app only)
+py manage.py loaddata file_name.json

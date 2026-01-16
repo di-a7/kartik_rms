@@ -28,7 +28,18 @@ class FoodSerializer(serializers.ModelSerializer):
    def get_price_with_tax(self, food:Food):
       return food.price * 0.11 + food.price
 
+class OrderItemSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = OrderItem
+      fields = ['food']
 
+
+class OrderSerializer(serializers.ModelSerializer):
+   user = serializers.HiddenField(default = serializers.CurrentUserDefault())
+   items = OrderItemSerializer()
+   class Meta:
+      model = Order
+      fields = ["user","table","total_price","status","payment_status","items"]
 # data optimization, filtering, pagination
 
 
