@@ -15,7 +15,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 # Class Based
 # ModelViewset
 
-class CategoryViewset(viewsets.ModelViewSet):
+@extend_schema(tags=['Category'])
+class CategoryViewset(viewsets.ReadOnlyModelViewSet):
    queryset = Category.objects.all()
    serializer_class = CategorySerializer
    permission_classes = [IsAuthenticatedOrReadOnly]
@@ -38,7 +39,7 @@ class CategoryViewset(viewsets.ModelViewSet):
       category.delete()
       return Response({"detail":"Data has been deleted."}, status = status.HTTP_204_NO_CONTENT)
 
-
+@extend_schema(tags=['Foods'])
 class FoodViewset(viewsets.ModelViewSet):
    queryset = Food.objects.select_related('category').all()
    serializer_class = FoodSerializer
@@ -59,6 +60,7 @@ class FoodViewset(viewsets.ModelViewSet):
       # your non-standard behaviour
       return super().list(request)
 
+@extend_schema(tags=['Orders'])
 class OrderViewset(viewsets.ModelViewSet):
    queryset = Order.objects.prefetch_related('items').all()
    serializer_class = OrderSerializer

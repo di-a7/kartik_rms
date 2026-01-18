@@ -36,13 +36,36 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
    user = serializers.HiddenField(default = serializers.CurrentUserDefault())
-   items = OrderItemSerializer()
+   items = OrderItemSerializer(many=True)
+   status = serializers.CharField(read_only=True)
+   payment_status = serializers.BooleanField(read_only=True)
+   total_price = serializers.IntegerField(read_only=True)
    class Meta:
       model = Order
       fields = ["user","table","total_price","status","payment_status","items"]
+   
+   def create(self, validated_data):
+      items =  validated_data.pop('items')      #"items": [{"food": 1},{"food": 22},{"food": 22},{"food": 22}]
+      total = 0
+      for item in items:
+         food_item = item.get('food')     # food_item = 1
+         total += food_item.price
+      
+      order = Order.objects.create(total_price = total, **validated_data)
+      for item in items:
+         OrderItem.objects.create(order = order, food = item.get('food'))
+      return order
+
+
+
+
+
 # data optimization, filtering, pagination
 
+#{
+#   "total_price": 500,
+#   
+# }
 
-
-
+# 
 
