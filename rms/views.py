@@ -16,10 +16,10 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 # ModelViewset
 
 @extend_schema(tags=['Category'])
-class CategoryViewset(viewsets.ReadOnlyModelViewSet):
+class CategoryViewset(viewsets.ModelViewSet):
    queryset = Category.objects.all()
    serializer_class = CategorySerializer
-   permission_classes = [IsAuthenticatedOrReadOnly]
+   # permission_classes = [IsAuthenticatedOrReadOnly]
    
    @extend_schema(
       parameters=[

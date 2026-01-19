@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Category Manager</title>
+   <style>
+      body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f8f9fa; color: #333; }
+      .container { max-width: 800px; margin: auto; }
+      
+      /* Form Styling */
+      .form-section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 30px; }
+      .form-group { display: flex; gap: 10px; }
+      input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+      button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+      button:hover { background-color: #218838; }
+
+      /* Table Styling */
+      table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+      th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+      th { background-color: #007bff; color: white; }
+      tr:last-child td { border-bottom: none; }
+      
+      .error { color: #dc3545; margin-bottom: 10px; font-size: 0.9em; }
+   </style>
+</head>
+<body>
+
+<div class="container">
+   <h2>Category Manager</h2>
+
+   <div class="form-section">
+      <h3>Create New Category</h3>
+      <div id="error-message" class="error"></div>
+      <form id="category-form" class="form-group">
+         <input type="text" id="category-name" placeholder="Enter category name" required>
+         <button type="submit">Add Category</button>
+      </form>
+   </div>
+
+   <table>
+      <thead>
+         <tr>
+               <th>ID</th>
+               <th>Category Name</th>
+         </tr>
+      </thead>
+      <tbody id="category-body">
+         </tbody>
+   </table>
+</div>
+
+<script>
+   const API_URL = 'http://127.0.0.1:8000/api/v1/category/';
+
+   // 1. Fetch and display categories
+   async function fetchCategories() {
+      try {
+         const response = await fetch(API_URL);
+         const data = await response.json();
+         const tbody = document.getElementById('category-body');
+         
+         tbody.innerHTML = ''; // Clear current list
+         data.forEach(category => {
+               tbody.innerHTML += `<tr><td>${category.id}</td><td>${category.name}</td></tr>`;
+         });
+      } catch (err) {
+         console.error("Failed to fetch:", err);
+      }
+   }
+
+   // 2. Handle Form Submission (POST)
+   document.getElementById('category-form').addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent page reload
+      
+      const nameInput = document.getElementById('category-name');
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.innerText = ''; // Reset errors
+
+      const categoryData = {
+         name: nameInput.value
+      };
+
+      try {
+         const response = await fetch(API_URL, {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json',
+               },
+               body: JSON.stringify(categoryData)
+         });
+
+         if (response.ok) {
+               nameInput.value = ''; // Clear input
+               fetchCategories();    // Refresh the list
+         } else {
+               const errorData = await response.json();
+               errorDiv.innerText = 'Error: ' + JSON.stringify(errorData);
+         }
+      } catch (err) {
+         errorDiv.innerText = 'Connection error. Is the API running?';
+      }
+   });
+
+   // Initial load
+   fetchCategories();
+</script>
+
+</body>
+</html>
